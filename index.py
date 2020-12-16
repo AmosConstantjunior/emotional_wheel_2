@@ -4,6 +4,7 @@ from dash.dependencies import Input, Output
 
 from app import app
 from apps import app1, app2, brief, erreur404
+from app import server
 
 
 app.layout = html.Div([
