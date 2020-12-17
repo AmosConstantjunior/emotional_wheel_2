@@ -7,11 +7,14 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, Tf
 import plotly.graph_objs as go
 from wordcloud import WordCloud
 from time import time
+from app import app
 
 import numpy as np
 
 df = pd.read_csv('apps/data/Emotion_final_.csv')
-dft_2 = df.iloc[:20,:]
+dft_2 = df.iloc[:50,:]
+list_emotions = list(df['Emotion'].unique()) 
+list_emotions.append('all')
 table_donnees = go.Figure(data=[go.Table(
     header=dict(values=list(dft_2.columns),
                 fill_color='#3F3680',
@@ -76,6 +79,19 @@ layout = go.Layout(barmode = "group",plot_bgcolor='#3F3680' ,
 fig_2 = go.Figure(data = trace, layout = layout)
 
 # ############################## Fin ###################
+
+def generate_table(dataframe, max_rows=50):
+    return html.Table(id="table_data",children=[
+        html.Thead(
+            html.Tr([html.Th(col) for col in dataframe.columns])
+        ),
+        html.Tbody(children=[
+            html.Tr([
+                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+            ]) for i in range(min(len(dataframe), max_rows))
+        ])
+    ])
+
 # #########################Nav Bar #########################
 nav_2 = html.Nav(className='container', children=[
     html.Ul(className='basse', children=[
@@ -93,6 +109,12 @@ nav_2 = html.Nav(className='container', children=[
 ])
 # ##########################"fin "########"#################
 
+
+
+# ##########################################################
+
+
+
 layout = html.Div([
   nav_2,  
   html.H2(id='test', children=["L'analyse et au traitement des données."]),
@@ -109,24 +131,107 @@ layout = html.Div([
       html.Article(id="article_2_block_1",children=[
           dash_table.DataTable(
         id='table',
-        columns=[{"name": i, "id": i} 
-                 for i in dft_2.columns],
-        data=dft_2.to_dict('records'),
-        style_cell={'textAlign':'left', 'width':'10vw'},
-        style_header=dict(backgroundColor="#000"),
-        style_data=dict(backgroundColor="#3F3680"), 
-        style_table={
-            'height': '80vh', 'width': '56vw', 'overflowY': 'auto', 'color':'#7FDBFF'
+        columns=[{'id': c, 'name': c} for c in dft_2.columns],
+                                    data= dft_2.to_dict('records'),
+                                    #Style table as list view
+                                    #style_as_list_view=True,
+                                    fixed_rows={'headers': True},
+                                    # fixed_columns={'headers': True, 'data' :1},
+                                    export_format='csv',
+                                    style_table={'opacity':'0.80',
+                                                'maxHeight': '60ex',
+                                                'overflow': 'scroll',
+                                                'width': '100%',    
+                                                'minWidth': '100%',
+                                                'margin-left':'auto',
+                                                'margin-right':'auto', 'border-raduis':'25px'},
+                                    #Cell dim + textpos
+                                    style_cell_conditional=[{'height': 'auto',
+                                        # all three widths are needed
+                                        'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                                        'whiteSpace': 'normal','textAlign':'center'}],
+                                    #Line strip
+                                    style_cell={'color': '#7FDBFF',
+                                            'backgroundColor': '#3F3680'},
+                                    # page_size = 15,
+                                    style_data_conditional=[{
+                                            'if': {'row_index': 'odd'},
+                                            'backgroundColor': '#3F3680'}],
+                                    style_header={
+                                        'backgroundColor': 'rgb(50, 50, 50)',
+                                        'fontWeight': 'bold',
+                                        'color':'#7FDBFF'}
 
-        }
+
+
+        # columns=[{"name": i, "id": i} 
+        #          for i in dft_2.columns],
+        # data=dft_2.to_dict('records'),
+        # style_cell={'textAlign':'Center', 'width':'10vw'},
+        # style_header=dict(backgroundColor="#000"),
+        # style_data=dict(backgroundColor="#3F3680"), 
+        # style_table={
+        #     'height': '80vh', 'width': '56vw', 'overflowY': 'auto', 'color':'#7FDBFF'
+
+        # }
     )
-      ])
+    #  generate_table(df)
+    # dash_table.DataTable(
+    # id='table',
+    # columns=[{"name": i, "id": i} for i in df.columns],
+    # data=df.to_dict('records'))
+     ])
+    
   ]),
   html.Section(id="block_2", children=[
       
     dcc.Graph(
-                  figure= fig_2, id="table_2"
+                  id="table_2"
               ) ,
-  ])
+    dcc.Dropdown(
+    options=[{'label': k,'value': k} for k in list_emotions],
+    searchable=False, id="les_emotions", value = "all"
+)  
+    
+  ]),
    
-])
+   ])
+   
+
+@app.callback(
+    Output('table_2', 'figure'),
+    Input('les_emotions', 'value'))
+def make_mots_hist(value):
+    if value == 'all':
+        df0 = df
+    else:
+        df0 = df.loc[df.Emotion == value]
+
+    vect = CountVectorizer(stop_words = 'english')
+    X = vect.fit_transform(corpus) 
+    words = vect.get_feature_names()
+    wsum = np.array(X.sum(0))[0]
+    ix = wsum.argsort()[::-1]
+    wrank = wsum[ix] 
+    labels = [words[i] for i in ix]
+    vect = CountVectorizer(stop_words = 'english')
+    X = vect.fit_transform(df0.Text) 
+    words = vect.get_feature_names()
+    wsum = np.array(X.sum(0))[0]
+    ix = wsum.argsort()[::-1]
+    wrank = wsum[ix] 
+    labels = [words[i] for i in ix]
+
+
+    trace = go.Bar(x = subsample(labels), 
+                   y = subsample(wrank),
+                   marker = dict(color = 'rgba(255, 174, 255, 0.5)',
+                   line = dict(color ='rgb(0,0,0)',width =1.5)))
+    layout = go.Layout(
+                    xaxis_title_text = 'Word rank',
+                    yaxis_title_text = 'word frequency',
+                    barmode = "group",plot_bgcolor='#3F3680' ,
+                    paper_bgcolor='#3F3680',
+                    font_color='#7FDBFF',)
+    figure = go.Figure(data = trace, layout = layout)
+    return figure

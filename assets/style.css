@@ -28,10 +28,13 @@ body{
 
 }
 #article_2_block_1{
-    height: 80vh;
+    height: 70vh;
     width: 56vw;
     border: 2px solid #3F3680;
     border-radius: 10px;
+    color : #7FDBFF;
+    /* overflow-y: scroll; */
+    
 
 }
 #WordCloud{
@@ -96,7 +99,23 @@ body{
   height: 100%;
   user-select: none;
 }
-
+#logo{
+  height: 55vh;
+  background-image: url('emotinal_wheel.png');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-top:2vh ;
+}
+#table_data{
+  height: 20vh;
+  overflow-y: scroll;
+}
+#table_data tbody{
+  overflow-y: scroll;
+  height: 20vh;
+}
 .static {
     width: 100%;
     height: 100%;
@@ -214,3 +233,22 @@ body{
     4.3% {opacity: 1; transform: scaleY(4);}
     43% {opacity: 1; transform: scaleX(10) rotate(60deg);}
   }
+
+  #tete{
+    height: 42vh;
+    margin-bottom: 6vh;
+    color: #7FDBFF;
+    text-align: justify;
+  }
+  #lebas{
+    margin-top: 6vh;
+    margin-bottom: 4vh;
+    text-align: justify;
+    color: #7FDBFF;
+  }
+ #block_3{
+   height: 65vh;
+   margin-top: 5vh;
+   border: 1px solid black;
+   background-color: grey;
+ }
