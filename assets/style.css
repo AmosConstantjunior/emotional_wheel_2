@@ -251,4 +251,17 @@ body{
    margin-top: 5vh;
    border: 1px solid black;
    background-color: grey;
+   
  }
+ #demo-dropdown{
+   margin-bottom: 5vh;
+ }
+ #demo-dropdown *{
+  color:  #7FDBFF;
+  background-color:#3F3680;
+}
+#les_emotions *{
+  color:  #7FDBFF;
+  background-color:#3F3680;
+  
+}

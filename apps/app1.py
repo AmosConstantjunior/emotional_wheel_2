@@ -13,6 +13,9 @@ import numpy as np
 
 df = pd.read_csv('apps/data/Emotion_final_.csv')
 dft_2 = df.iloc[:50,:]
+df2 = pd.read_csv('apps/data/text_emotion.csv')
+dft_3 = df2.iloc[:50,:]
+
 list_emotions = list(df['Emotion'].unique()) 
 list_emotions.append('all')
 table_donnees = go.Figure(data=[go.Table(
@@ -118,84 +121,107 @@ nav_2 = html.Nav(className='container', children=[
 layout = html.Div([
   nav_2,  
   html.H2(id='test', children=["L'analyse et au traitement des données."]),
-  
-  html.Section(id="block_1", children=[
-      html.Article(id="article_1_block_1",children=[
-          html.Div(id='WordCloud', children=[
-              dcc.Graph(
-                  figure= fig_histo, id = 'table'
-              )
+ 
+  html.Section(id='contenu_1', children=[
 
-          ])
-      ]),
-      html.Article(id="article_2_block_1",children=[
-          dash_table.DataTable(
-        id='table',
-        columns=[{'id': c, 'name': c} for c in dft_2.columns],
-                                    data= dft_2.to_dict('records'),
-                                    #Style table as list view
-                                    #style_as_list_view=True,
-                                    fixed_rows={'headers': True},
-                                    # fixed_columns={'headers': True, 'data' :1},
-                                    export_format='csv',
-                                    style_table={'opacity':'0.80',
-                                                'maxHeight': '60ex',
-                                                'overflow': 'scroll',
-                                                'width': '100%',    
-                                                'minWidth': '100%',
-                                                'margin-left':'auto',
-                                                'margin-right':'auto', 'border-raduis':'25px'},
-                                    #Cell dim + textpos
-                                    style_cell_conditional=[{'height': 'auto',
-                                        # all three widths are needed
-                                        'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
-                                        'whiteSpace': 'normal','textAlign':'center'}],
-                                    #Line strip
-                                    style_cell={'color': '#7FDBFF',
-                                            'backgroundColor': '#3F3680'},
-                                    # page_size = 15,
-                                    style_data_conditional=[{
-                                            'if': {'row_index': 'odd'},
-                                            'backgroundColor': '#3F3680'}],
-                                    style_header={
-                                        'backgroundColor': 'rgb(50, 50, 50)',
-                                        'fontWeight': 'bold',
-                                        'color':'#7FDBFF'}
+        html.Section(id="block_1", children=[
+            html.Article(id="article_1_block_1",children=[
+                html.Div(id='WordCloud', children=[
+                    dcc.Graph(
+                        figure= fig_histo, id = 'table'
+                    )
 
+                ])
+            ]),
+            html.Article(id="article_2_block_1",children=[
+                dash_table.DataTable(
+                id='table',
+                columns=[{'id': c, 'name': c} for c in dft_2.columns],
+                                            data= dft_2.to_dict('records'),
+                                            #Style table as list view
+                                            #style_as_list_view=True,
+                                            fixed_rows={'headers': True},
+                                            # fixed_columns={'headers': True, 'data' :1},
+                                            export_format='csv',
+                                            style_table={'opacity':'0.80',
+                                                        'maxHeight': '60ex',
+                                                        'overflow': 'scroll',
+                                                        'width': '100%',    
+                                                        'minWidth': '100%',
+                                                        'margin-left':'auto',
+                                                        'margin-right':'auto', 'border-raduis':'25px'},
+                                            #Cell dim + textpos
+                                            style_cell_conditional=[{'height': 'auto',
+                                                # all three widths are needed
+                                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                                                'whiteSpace': 'normal','textAlign':'center'}],
+                                            #Line strip
+                                            style_cell={'color': '#7FDBFF',
+                                                    'backgroundColor': '#3F3680'},
+                                            # page_size = 15,
+                                            style_data_conditional=[{
+                                                    'if': {'row_index': 'odd'},
+                                                    'backgroundColor': '#3F3680'}],
+                                            style_header={
+                                                'backgroundColor': 'rgb(50, 50, 50)',
+                                                'fontWeight': 'bold',
+                                                'color':'#7FDBFF'}
+            
+            )
+            
+            ])
+            
+        ]),
+        html.Section(id="block_2", children=[
+            
+            dcc.Graph(
+                        id="table_2"
+                    ) ,
+            dcc.Dropdown(
+            options=[{'label': k,'value': k} for k in list_emotions],
+            searchable=False, id="les_emotions", value = "all", style={'width':'15vw'})
+            ]),
+        ]),
+        html.Section([
+            html.H2(id='test', children=['Les tableau du data.world']),
+            dash_table.DataTable(
+                id='table_3',
+                columns=[{'id': c, 'name': c} for c in dft_3.columns],
+                                            data= dft_3.to_dict('records'),
+                                            #Style table as list view
+                                            #style_as_list_view=True,
+                                            fixed_rows={'headers': True},
+                                            # fixed_columns={'headers': True, 'data' :1},
+                                            export_format='csv',
+                                            style_table={'opacity':'0.80',
+                                                        'maxHeight': '60ex',
+                                                        'overflow': 'scroll',
+                                                        'width': '100%',    
+                                                        'minWidth': '100%',
+                                                        'margin-left':'auto',
+                                                        'margin-right':'auto', 'border-raduis':'25px'},
+                                            #Cell dim + textpos
+                                            style_cell_conditional=[{'height': 'auto',
+                                                # all three widths are needed
+                                                'minWidth': '180px', 'width': '180px', 'maxWidth': '180px',
+                                                'whiteSpace': 'normal','textAlign':'center'}],
+                                            #Line strip
+                                            style_cell={'color': '#7FDBFF',
+                                                    'backgroundColor': '#3F3680'},
+                                            # page_size = 15,
+                                            style_data_conditional=[{
+                                                    'if': {'row_index': 'odd'},
+                                                    'backgroundColor': '#3F3680'}],
+                                            style_header={
+                                                'backgroundColor': 'rgb(50, 50, 50)',
+                                                'fontWeight': 'bold',
+                                                'color':'#7FDBFF'}
+            
+            )
+        ])
 
-
-        # columns=[{"name": i, "id": i} 
-        #          for i in dft_2.columns],
-        # data=dft_2.to_dict('records'),
-        # style_cell={'textAlign':'Center', 'width':'10vw'},
-        # style_header=dict(backgroundColor="#000"),
-        # style_data=dict(backgroundColor="#3F3680"), 
-        # style_table={
-        #     'height': '80vh', 'width': '56vw', 'overflowY': 'auto', 'color':'#7FDBFF'
-
-        # }
-    )
-    #  generate_table(df)
-    # dash_table.DataTable(
-    # id='table',
-    # columns=[{"name": i, "id": i} for i in df.columns],
-    # data=df.to_dict('records'))
-     ])
-    
-  ]),
-  html.Section(id="block_2", children=[
-      
-    dcc.Graph(
-                  id="table_2"
-              ) ,
-    dcc.Dropdown(
-    options=[{'label': k,'value': k} for k in list_emotions],
-    searchable=False, id="les_emotions", value = "all"
-)  
-    
-  ]),
    
-   ])
+])
    
 
 @app.callback(
@@ -235,3 +261,5 @@ def make_mots_hist(value):
                     font_color='#7FDBFF',)
     figure = go.Figure(data = trace, layout = layout)
     return figure
+
+    
